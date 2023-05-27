@@ -4,7 +4,6 @@ import com.example.order.entity.Item;
 import lombok.Builder;
 
 import java.math.BigDecimal;
-import java.util.Objects;
 
 @Builder
 public class ItemDto {
