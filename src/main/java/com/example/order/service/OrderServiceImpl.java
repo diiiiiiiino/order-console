@@ -1,44 +1,65 @@
 package com.example.order.service;
 
 import com.example.order.dto.OrderDto;
+import com.example.order.entity.Item;
+import com.example.order.entity.Order;
+import com.example.order.entity.OrderDetail;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
     private final ItemService itemService;
+    private final PriceStrategy shipPriceStrategy;
 
     @Override
-    public void order(List<OrderDto> orders) {
-        //1. 상품 조회 및 재고 확인
-        var inventory = itemService.getInventory();
-        List<String> notContainItems = orders.stream()
-                .filter(orderDto -> !inventory.containsKey(orderDto.getItemNo()))
+    public Order order(List<OrderDto> orders) {
+        if(orders == null || orders.isEmpty()){
+            throw new IllegalArgumentException("요청한 주문 내역이 없습니다.");
+        }
+
+        List<String> itemNoList = orders.stream()
                 .map(OrderDto::getItemNo)
                 .collect(Collectors.toList());
 
-        if(notContainItems.size() > 0){
-            String notContainItemNo = notContainItems.stream()
-                    .collect(Collectors.joining(", "));
+        itemService.checkExistsItemNo(itemNoList);
+        itemService.decreaseQuantity(orders);
 
-            StringBuffer sb = new StringBuffer();
-            sb.append("상품번호 : ")
-              .append(notContainItemNo)
-              .append("의 상품이 존재하지 않습니다.");
+        List<OrderDetail> details = createOrderDetails(orders);
 
-            throw new NoSuchElementException(sb.toString());
-        }
+        BigDecimal orderPrice = details.stream()
+                .map(OrderDetail::getPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        //2. 재고 차감
-        for(OrderDto orderDto : orders){
-            itemService.decreaseQuantity(orderDto.getItemNo(), orderDto.getQuantity());
-        }
+        BigDecimal shipPrice = shipPriceStrategy.calculate(details);
 
-        //3. 주문 내역 생성 및 리턴
+        Order order = Order.builder()
+                .orderPrice(orderPrice)
+                .shipPrice(shipPrice)
+                .payPrice(orderPrice.add(shipPrice))
+                .details(details)
+                .build();
+
+        return order;
+    }
+
+    private List<OrderDetail> createOrderDetails(List<OrderDto> orders){
+        if(orders == null || orders.isEmpty()) return new ArrayList<>();
+
+        ConcurrentMap<String, Item> inventory = itemService.getInventory();
+
+        return orders.stream()
+                .map(order -> {
+                    Item item = inventory.get(order.getItemNo());
+                    return OrderDetail.of(item, order.getQuantity());
+                })
+                .collect(Collectors.toList());
     }
 }

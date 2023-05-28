@@ -24,8 +24,7 @@ public class CsvItemFileReader implements ItemFileReader {
         Resource resource = new ClassPathResource(path);
         List<String[]> results = new ArrayList<>();
 
-        try (FileReader fileReader = new FileReader(resource.getFile());
-             BufferedReader bufferedReader = new BufferedReader(fileReader)) {
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(resource.getFile()))) {
 
             String line;
             while ((line = bufferedReader.readLine()) != null) {

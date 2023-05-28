@@ -1,5 +1,6 @@
 package com.example.order.entity;
 
+import com.example.order.exception.SoldOutException;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,11 +12,20 @@ import java.util.Objects;
 @Setter
 @Builder
 public class Item {
-    Long id;
     String no;
     String name;
     BigDecimal price;
     Long quantity;
+
+    public void decreaseQuantity(Long orderQuantity){
+        if(quantity == 0){
+            throw new SoldOutException("SoldOutException 발생. 재고가 부족합니다.");
+        } else if(quantity < orderQuantity){
+            throw new SoldOutException("SoldOutException 발생. 주문한 상품량이 재고량보다 큽니다");
+        }
+
+        quantity -= orderQuantity;
+    }
 
     @Override
     public String toString() {
@@ -27,14 +37,14 @@ public class Item {
                 .toString();
     }
 
-    public static Item of(String[] itemRow){
+    public static Item from(String[] itemRow){
         Objects.requireNonNull(itemRow);
 
         if(itemRow.length != 4){
             return Item.builder()
                     .no("-----")
                     .name("-----")
-                    .price(new BigDecimal("0"))
+                    .price(BigDecimal.ZERO)
                     .quantity(0L)
                     .build();
         } else {

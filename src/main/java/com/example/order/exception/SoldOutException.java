@@ -1,4 +1,4 @@
-package com.example.order.enumeration;
+package com.example.order.exception;
 
 public class SoldOutException extends RuntimeException {
     public SoldOutException(String message) {
