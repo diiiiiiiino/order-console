@@ -16,7 +16,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class MainController {
+public class OrderController {
     private final ItemFileReader itemFileReader;
     private final ItemService itemService;
     private final OrderService orderService;
