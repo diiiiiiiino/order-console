@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +26,7 @@ public class CsvItemFileReader implements ItemFileReader {
         Resource resource = new ClassPathResource(path);
         List<String[]> results = new ArrayList<>();
 
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(resource.getFile()))) {
+        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8))) {
 
             String line;
             while ((line = bufferedReader.readLine()) != null) {
