@@ -1,5 +1,6 @@
 package com.nos.order.service;
 
+import com.nos.order.base.BaseTest;
 import com.nos.order.dto.OrderDto;
 import com.nos.order.entity.Item;
 import com.nos.order.entity.Order;
@@ -16,7 +17,7 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.*;
 
-public class OrderServiceTest {
+public class OrderServiceTest extends BaseTest {
     final ItemService itemService;
     final PriceStrategy priceStrategy;
     final OrderDetailService orderDetailService;
@@ -68,7 +69,7 @@ public class OrderServiceTest {
     }
 
     @ParameterizedTest
-    @MethodSource("com.example.order.util.MethodSources#listValidSource")
+    @MethodSource("com.nos.order.util.MethodSources#listValidSource")
     @DisplayName("1-2. 주문 (주문내역이 null 또는 empty일때)")
     void order1_2(List<OrderDto> orders) {
         Assertions.assertThrows(IllegalArgumentException.class, () -> orderService.order(orders));

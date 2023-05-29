@@ -1,5 +1,6 @@
 package com.nos.order.strategy;
 
+import com.nos.order.base.BaseTest;
 import com.nos.order.entity.Item;
 import com.nos.order.entity.OrderDetail;
 import com.nos.order.service.PriceStrategy;
@@ -11,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.util.List;
 
-public class PriceStrategyTest {
+public class PriceStrategyTest extends BaseTest {
     PriceStrategy priceStrategy;
 
     public PriceStrategyTest() {

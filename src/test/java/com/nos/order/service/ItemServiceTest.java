@@ -1,5 +1,6 @@
 package com.nos.order.service;
 
+import com.nos.order.base.BaseTest;
 import com.nos.order.dto.OrderDto;
 import com.nos.order.entity.Item;
 import com.nos.order.exception.SoldOutException;
@@ -17,7 +18,7 @@ import java.util.NoSuchElementException;
 import java.util.concurrent.*;
 import java.util.stream.Stream;
 
-public class ItemServiceTest {
+public class ItemServiceTest extends BaseTest {
     ConcurrentMap<String, Item> inventory;
     final ItemService itemService;
 
@@ -56,7 +57,7 @@ public class ItemServiceTest {
     }
 
     @ParameterizedTest
-    @MethodSource("com.example.order.util.MethodSources#listValidSource")
+    @MethodSource("com.nos.order.util.MethodSources#listValidSource")
     @DisplayName("1-3. 아이템 생성 (상품데이터가 null 또는 empty일때)")
     void creteItem1_3(final List<String[]> results) {
         Assertions.assertThrows(IllegalArgumentException.class, () -> itemService.create(results));
@@ -125,7 +126,7 @@ public class ItemServiceTest {
     }
 
     @ParameterizedTest
-    @MethodSource("com.example.order.util.MethodSources#listValidSource")
+    @MethodSource("com.nos.order.util.MethodSources#listValidSource")
     @DisplayName("2-3. 아이템 수량 감소 (요청데이터가 null 또는 empty일때)")
     void decreaseQuantity2_3(final List<OrderDto> orders) {
         Assertions.assertThrows(IllegalArgumentException.class, () -> itemService.decreaseQuantity(orders));
@@ -150,7 +151,7 @@ public class ItemServiceTest {
     }
 
     @ParameterizedTest
-    @MethodSource("com.example.order.util.MethodSources#listValidSource")
+    @MethodSource("com.nos.order.util.MethodSources#listValidSource")
     @DisplayName("3-3. 상품번호 존재여부 확인 (요청데이터가 null 또는 empty일때)")
     void checkExistsItemNo3_3(final List<String> itemNoList) {
         Assertions.assertThrows(IllegalArgumentException.class, () -> itemService.checkExistsItemNo(itemNoList));

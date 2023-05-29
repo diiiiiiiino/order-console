@@ -1,5 +1,6 @@
 package com.nos.order.entity;
 
+import com.nos.order.base.BaseTest;
 import com.nos.order.exception.SoldOutException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -11,7 +12,7 @@ import java.math.BigDecimal;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Stream;
 
-public class ItemTest {
+public class ItemTest extends BaseTest {
 
     @ParameterizedTest
     @MethodSource("decreaseQuantity1_1Source")

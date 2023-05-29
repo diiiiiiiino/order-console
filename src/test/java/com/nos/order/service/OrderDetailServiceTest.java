@@ -1,5 +1,6 @@
 package com.nos.order.service;
 
+import com.nos.order.base.BaseTest;
 import com.nos.order.dto.OrderDto;
 import com.nos.order.entity.Item;
 import com.nos.order.entity.OrderDetail;
@@ -17,7 +18,7 @@ import java.util.concurrent.ConcurrentMap;
 
 import static org.mockito.Mockito.*;
 
-public class OrderDetailServiceTest {
+public class OrderDetailServiceTest extends BaseTest {
     final ItemService itemService;
     final OrderDetailService orderDetailService;
 
@@ -83,7 +84,7 @@ public class OrderDetailServiceTest {
     }
 
     @ParameterizedTest
-    @MethodSource("com.example.order.util.MethodSources#listValidSource")
+    @MethodSource("com.nos.order.util.MethodSources#listValidSource")
     @DisplayName("1-3. 주문 상세 생성 (주문내역이 null 또는 empty일때)")
     void create1_3(List<OrderDto> orders) {
         Assertions.assertThrows(IllegalArgumentException.class, () -> orderDetailService.create(orders));

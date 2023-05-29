@@ -1,5 +1,6 @@
 package com.nos.order.excel;
 
+import com.nos.order.base.BaseTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -8,7 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
-public class ExcelReaderTest {
+public class ExcelReaderTest extends BaseTest {
 
     @Test
     @DisplayName("1-1. 엑셀 파일 read (File 존재)")
