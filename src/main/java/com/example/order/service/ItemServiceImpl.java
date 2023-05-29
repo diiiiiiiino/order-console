@@ -31,7 +31,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public synchronized void decreaseQuantity(List<OrderDto> orders) {
+    public void decreaseQuantity(List<OrderDto> orders) {
         if(orders == null || orders.isEmpty())
             throw new IllegalArgumentException("주문가능한 요청내역이 없습니다.");
 
@@ -65,10 +65,9 @@ public class ItemServiceImpl implements ItemService {
         if(inventory == null || inventory.isEmpty())
             throw new NoSuchElementException("주문 가능한 상품이 없습니다.");
 
-
         StringBuilder sb = new StringBuilder("상품번호\t\t\t");
-        sb.append("상품명").append("\t\t\t")
-          .append("판매가격").append("\t\t\t")
+        sb.append("상품명").append("\t\t\t\t\t\t")
+          .append("판매가격").append("\t\t\t\t\t\t")
           .append("재고수").append("\n");
 
         String itemStr = inventory.values().stream()

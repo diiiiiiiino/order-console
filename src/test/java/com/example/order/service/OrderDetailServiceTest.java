@@ -15,9 +15,7 @@ import java.util.NoSuchElementException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.times;
 
 public class OrderDetailServiceTest {
     final ItemService itemService;

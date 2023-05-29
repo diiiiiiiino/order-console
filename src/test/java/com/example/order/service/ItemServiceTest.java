@@ -11,9 +11,10 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.math.BigDecimal;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.concurrent.*;
 import java.util.stream.Stream;
 
 public class ItemServiceTest {
@@ -73,18 +74,23 @@ public class ItemServiceTest {
 
         itemService.create(results);
 
-        Thread[] threads = new Thread[threadCount];
-        for (int i = 0; i < threadCount; i++) {
-            threads[i] = new Thread(() -> itemService.decreaseQuantity(orders));
-            threads[i].start();
-        }
+        ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
+        CountDownLatch latch = new CountDownLatch(threadCount);
 
         for (int i = 0; i < threadCount; i++) {
-            threads[i].join();
+            executorService.submit(() -> {
+                itemService.decreaseQuantity(orders);
+                latch.countDown();
+            });
         }
+
+        executorService.shutdown();
+        latch.await();
 
         ConcurrentMap<String, Item> inventory = itemService.getInventory();
-        Assertions.assertEquals(0, inventory.get(itemNo).getQuantity());
+        Item item = inventory.get(itemNo);
+
+        Assertions.assertEquals(0, item.getQuantity().get());
     }
 
     @ParameterizedTest
@@ -97,21 +103,23 @@ public class ItemServiceTest {
 
         itemService.create(results);
 
-        Thread[] threads = new Thread[threadCount];
+        ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
+        CountDownLatch latch = new CountDownLatch(threadCount);
+
         for (int i = 0; i < threadCount; i++) {
-            threads[i] = new Thread(() -> {
+            executorService.submit(() -> {
                 try {
                     itemService.decreaseQuantity(orders);
                 } catch (SoldOutException e){
                     exceptionHelper.setException(e);
+                } finally {
+                    latch.countDown();
                 }
             });
-            threads[i].start();
         }
 
-        for (int i = 0; i < threadCount; i++) {
-            threads[i].join();
-        }
+        executorService.shutdown();
+        latch.await();
 
         Assertions.assertNotNull(exceptionHelper.getException());
     }
