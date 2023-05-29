@@ -17,7 +17,8 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public void create(List<String[]> results) {
-        if(results == null || results.isEmpty()) return;
+        if(results == null || results.isEmpty())
+            throw new IllegalArgumentException("생성가능한 상품이 데이터가 없습니다.");
 
         List<Item> items = results.subList(1, results.size()).stream()
                 .map(Item::from)
@@ -31,7 +32,8 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public synchronized void decreaseQuantity(List<OrderDto> orders) {
-        if(orders == null || orders.isEmpty()) return;
+        if(orders == null || orders.isEmpty())
+            throw new IllegalArgumentException("주문가능한 요청내역이 없습니다.");
 
         for(OrderDto order : orders){
             Item item = inventory.get(order.getItemNo());
@@ -43,7 +45,8 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public void checkExistsItemNo(List<String> itemNoList){
-        if(itemNoList == null || itemNoList.isEmpty()) return;
+        if(itemNoList == null || itemNoList.isEmpty())
+            throw new IllegalArgumentException("조회할 상품번호 내역이 없습니다.");
 
         List<String> notContainItems = itemNoList.stream()
                 .filter(itemNo -> !inventory.containsKey(itemNo))
@@ -59,10 +62,9 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public void display(){
-        if(inventory == null || inventory.isEmpty()){
-            System.out.println("주문 가능한 상품이 없습니다.");
-            return;
-        }
+        if(inventory == null || inventory.isEmpty())
+            throw new NoSuchElementException("주문 가능한 상품이 없습니다.");
+
 
         StringBuilder sb = new StringBuilder("상품번호\t\t\t");
         sb.append("상품명").append("\t\t\t")

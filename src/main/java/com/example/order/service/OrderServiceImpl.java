@@ -1,22 +1,20 @@
 package com.example.order.service;
 
 import com.example.order.dto.OrderDto;
-import com.example.order.entity.Item;
 import com.example.order.entity.Order;
 import com.example.order.entity.OrderDetail;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
     private final ItemService itemService;
+    private final OrderDetailService orderDetailService;
     private final PriceStrategy shipPriceStrategy;
 
     @Override
@@ -32,7 +30,7 @@ public class OrderServiceImpl implements OrderService {
         itemService.checkExistsItemNo(itemNoList);
         itemService.decreaseQuantity(orders);
 
-        List<OrderDetail> details = createOrderDetails(orders);
+        List<OrderDetail> details = orderDetailService.create(orders);
 
         BigDecimal orderPrice = details.stream()
                 .map(OrderDetail::getPrice)
@@ -48,18 +46,5 @@ public class OrderServiceImpl implements OrderService {
                 .build();
 
         return order;
-    }
-
-    private List<OrderDetail> createOrderDetails(List<OrderDto> orders){
-        if(orders == null || orders.isEmpty()) return new ArrayList<>();
-
-        ConcurrentMap<String, Item> inventory = itemService.getInventory();
-
-        return orders.stream()
-                .map(order -> {
-                    Item item = inventory.get(order.getItemNo());
-                    return OrderDetail.of(item, order.getQuantity());
-                })
-                .collect(Collectors.toList());
     }
 }
